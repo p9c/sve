@@ -8,7 +8,7 @@ import (
 
 	//html "github.com/p9c/sve/internal/htmlx"
 	// "golang.org/x/net/html"
-	"github.com/sve/html"
+	"github.com/p9c/sve/html"
 )
 
 // compactNodeTree operates on a Node tree in-place and find elements with static

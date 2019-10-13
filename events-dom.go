@@ -1,9 +1,9 @@
 package sve
 
 import (
+	"github.com/p9c/sve/js"
 	"sync"
 
-	"github.com/p9c/sve/js"
 )
 
 // DOMEvent is an event originated in the browser.  It wraps the JS event that comes in.
