@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"bytes"
@@ -19,8 +19,8 @@ import (
 
 // ParserGoPkg knows how to perform source file generation in relation to a package folder.
 // Whereas ParserGo handles converting a single template, ParserGoPkg is a higher level interface
-// and provides the functionality of the vugugen command line tool.  It will scan a package
-// folder for .vugu files and convert them to .go, with the appropriate defaults and logic.
+// and provides the functionality of the svegen command line tool.  It will scan a package
+// folder for .sve files and convert them to .go, with the appropriate defaults and logic.
 type ParserGoPkg struct {
 	pkgPath string
 	opts    ParserGoPkgOpts
@@ -28,7 +28,7 @@ type ParserGoPkg struct {
 
 // ParserGoPkgOpts is the options for ParserGoPkg.
 type ParserGoPkgOpts struct {
-	SkipRegisterComponentTypes bool // indicates func init() { vugu.RegisterComponentType(...) } code should not be emitted in each file
+	SkipRegisterComponentTypes bool // indicates func init() { sve.RegisterComponentType(...) } code should not be emitted in each file
 	SkipGoMod                  bool // do not try and create go.mod if it doesn't exist
 	SkipMainGo                 bool // do not try and create main_wasm.go if it doesn't exist in a main package
 }
@@ -44,15 +44,15 @@ func NewParserGoPkg(pkgPath string, opts *ParserGoPkgOpts) *ParserGoPkg {
 	return ret
 }
 
-// Run does the work and generates the appropriate .go files from .vugu files.
+// Run does the work and generates the appropriate .go files from .sve files.
 // It will also create a go.mod file if not present and not SkipGoMod.  Same for main.go and SkipMainGo (will also skip
 // if package already has file with package name something other than main).
 // Per-file code generation is performed by ParserGo.
 func (p *ParserGoPkg) Run() error {
 
-	// vugugen path/to/package
+	// svegen path/to/package
 
-	// comp-name.vugu
+	// comp-name.sve
 	// comp-name.go
 	// tag is "comp-name"
 	// component type is CompName
@@ -88,15 +88,15 @@ func (p *ParserGoPkg) Run() error {
 		return err
 	}
 
-	var vuguFileNames []string
+	var sveFileNames []string
 	for _, fn := range allFileNames {
-		if filepath.Ext(fn) == ".vugu" {
-			vuguFileNames = append(vuguFileNames, fn)
+		if filepath.Ext(fn) == ".sve" {
+			sveFileNames = append(sveFileNames, fn)
 		}
 	}
 
-	if len(vuguFileNames) == 0 {
-		return fmt.Errorf("no .vugu files found, please create one and try again")
+	if len(sveFileNames) == 0 {
+		return fmt.Errorf("no .sve files found, please create one and try again")
 	}
 
 	pkgName := goGuessPkgName(p.pkgPath)
@@ -104,9 +104,9 @@ func (p *ParserGoPkg) Run() error {
 	namesToCheck := []string{"main"}
 
 	// run ParserGo on each file to generate the .go files
-	for _, fn := range vuguFileNames {
+	for _, fn := range sveFileNames {
 
-		baseFileName := strings.TrimSuffix(fn, ".vugu")
+		baseFileName := strings.TrimSuffix(fn, ".sve")
 		goFileName := baseFileName + ".go"
 		compTypeName := fnameToGoTypeName(goFileName)
 
@@ -169,12 +169,12 @@ import (
 	"fmt"
 	"flag"
 
-	"github.com/vugu/vugu"
+	"github.com/p9c/sve"
 )
 
 func main() {
 
-	mountPoint := flag.String("mount-point", "#vugu_mount_point", "The query selector for the mount point for the root component, if it is not a full HTML component")
+	mountPoint := flag.String("mount-point", "#sve_mount_point", "The query selector for the mount point for the root component, if it is not a full HTML component")
 	flag.Parse()
 
 	fmt.Printf("Entering main(), -mount-point=%q\n", *mountPoint)
@@ -182,12 +182,12 @@ func main() {
 
 	rootBuilder := &Root{}
 
-	buildEnv, err := vugu.NewBuildEnv()
+	buildEnv, err := sve.NewBuildEnv()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	renderer, err := vugu.NewJSRenderer(*mountPoint)
+	renderer, err := sve.NewJSRenderer(*mountPoint)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -214,7 +214,7 @@ func main() {
 			// 	"log"
 			// 	"os"
 
-			// 	"github.com/vugu/vugu"
+			// 	"github.com/p9c/sve"
 			// )
 
 			// func main() {
@@ -222,12 +222,12 @@ func main() {
 			// 	println("Entering main()")
 			// 	defer println("Exiting main()")
 
-			// 	rootInst, err := vugu.New(&Root{}, nil)
+			// 	rootInst, err := sve.New(&Root{}, nil)
 			// 	if err != nil {
 			// 		log.Fatal(err)
 			// 	}
 
-			// 	env := vugu.NewJSEnv("#root_mount_parent", rootInst, vugu.RegisteredComponentTypes())
+			// 	env := sve.NewJSEnv("#root_mount_parent", rootInst, sve.RegisteredComponentTypes())
 			// 	env.DebugWriter = os.Stdout
 
 			// 	for ok := true; ok; ok = env.EventWait() {
@@ -257,9 +257,9 @@ func main() {
 		}
 	}
 
-	for _, fn := range vuguFileNames {
+	for _, fn := range sveFileNames {
 
-		goFileName := strings.TrimSuffix(fn, ".vugu") + ".go"
+		goFileName := strings.TrimSuffix(fn, ".sve") + ".go"
 		goFilePath := filepath.Join(p.pkgPath, goFileName)
 
 		err := func() error {
@@ -284,13 +284,13 @@ func main() {
 
 			// create CompName.NewData with defaults if it doesn't exist in the package
 			// if _, ok := namesFound[compTypeName+".NewData"]; !ok {
-			// 	fmt.Fprintf(f, "\nfunc (ct *%s) NewData(props vugu.Props) (interface{}, error) { return &%s{}, nil }\n",
+			// 	fmt.Fprintf(f, "\nfunc (ct *%s) NewData(props sve.Props) (interface{}, error) { return &%s{}, nil }\n",
 			// 		compTypeName, compTypeName+"Data")
 			// }
 
 			// // register component unless disabled - nope, no more component registry
 			// if !p.opts.SkipRegisterComponentTypes && !fileHasInitFunc(goFilePath) {
-			// 	fmt.Fprintf(f, "\nfunc init() { vugu.RegisterComponentType(%q, &%s{}) }\n", strings.TrimSuffix(goFileName, ".go"), compTypeName)
+			// 	fmt.Fprintf(f, "\nfunc init() { sve.RegisterComponentType(%q, &%s{}) }\n", strings.TrimSuffix(goFileName, ".go"), compTypeName)
 			// }
 
 			return nil
@@ -360,8 +360,8 @@ func goGuessPkgName(pkgPath string) (ret string) {
 
 checkMore:
 
-	// check for a root.vugu file, in which case we assume "main"
-	_, err = os.Stat(filepath.Join(pkgPath, "root.vugu"))
+	// check for a root.sve file, in which case we assume "main"
+	_, err = os.Stat(filepath.Join(pkgPath, "root.sve"))
 	if err == nil {
 		return "main"
 	}

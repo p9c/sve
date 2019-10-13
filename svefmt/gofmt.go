@@ -1,4 +1,4 @@
-package vugufmt
+package svefmt
 
 import (
 	"bytes"

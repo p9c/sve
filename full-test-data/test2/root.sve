@@ -59,19 +59,19 @@ type Root struct {
     UseSuffix bool
 }
 
-func (c *Root) OnClickRun(event *vugu.DOMEvent, n int) {
+func (c *Root) OnClickRun(event *sve.DOMEvent, n int) {
     c.Success = !c.Success
     //log.Printf("HEY, GOT HERE!")
 }
 
-func (c *Root) OnUseSuffixChange(event *vugu.DOMEvent) {
+func (c *Root) OnUseSuffixChange(event *sve.DOMEvent) {
     es := event.EventSummary()
     t, _ := es["target"].(map[string]interface{})
     log.Printf("OnUseSuffixChange: %#v", t["checked"])
     //c.EmailValue, _ = t["value"].(string)
 }
 
-func (c *Root) EmailChanged(event *vugu.DOMEvent) {
+func (c *Root) EmailChanged(event *sve.DOMEvent) {
 
     c.EmailValue = event.PropString("target", "value")
 

@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 // // Env specifies the common methods for environment implementations.
 // // See JSEnv and StaticHtmlEnv for implementations.
@@ -202,7 +202,7 @@ func (e *BuildEnv) UseComponent(compKey CompKey, component Builder) {
 
 	------------------
 	TODO: We need to verify that component events and slots as planned
-	https://github.com/vugu/vugu/wiki/Component-Related-Features-Design
+	https://github.com/p9c/sve/wiki/Component-Related-Features-Design
 	still work with this idea above.  I THINK WE CAN JUST ASSIGN THE
 	SLOT AND EVENT CALLBACKS EACH TIME, THAT SHOULD WORK JUST FINE, WE
 	DON'T NEED TO COMPARE AND KEEP THE OLD SLOT FUNCS ETC, JUST OVERWRITE.
@@ -232,8 +232,8 @@ STRUCT TAGS:
 type Widget struct {
 
 	// component param
-	Size int `vugu:"cparam"`
-	FirstName *string `vugu:"cparam"`
+	Size int `sve:"cparam"`
+	FirstName *string `sve:"cparam"`
 
 	// computed property, used for display, but entirely dependent upon Size
 	DisplaySize string
@@ -260,7 +260,7 @@ type ModChecker interface{
 }
 
 type SomeComponent struct {
-	FirstName string `vugu:"modcheck"`
+	FirstName string `sve:"modcheck"`
 
 	FirstNameFormatted string // computed field, not "modcheck"'ed
 }

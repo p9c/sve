@@ -35,11 +35,11 @@ type bpi struct {
 	} `json:"bpi"`
 }
 
-func (data *RootData) HandleClick(event *vugu.DOMEvent) {
+func (data *RootData) HandleClick(event *sve.DOMEvent) {
 
 	data.bpi = bpi{}
 
-	go func(ee vugu.EventEnv) {
+	go func(ee sve.EventEnv) {
 
 		ee.Lock()
 		data.isLoading = true

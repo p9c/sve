@@ -1,9 +1,9 @@
-package vugu
+package sve
 
 import (
 	"sync"
 
-	"github.com/vugu/vugu/js"
+	"github.com/p9c/sve/js"
 )
 
 // DOMEvent is an event originated in the browser.  It wraps the JS event that comes in.
@@ -82,19 +82,19 @@ func (e *DOMEvent) EventSummary() map[string]interface{} {
 // JSEvent this returns a js.Value in wasm that corresponds to the event object.
 // Non-wasm implementation returns nil.
 func (e *DOMEvent) JSEvent() js.Value {
-	return e.window.Call("vuguGetActiveEvent")
+	return e.window.Call("sveGetActiveEvent")
 }
 
 // JSEventTarget returns the value of the "target" property of the event, the element
 // that the event was originally fired/registered on.
 func (e *DOMEvent) JSEventTarget() js.Value {
-	return e.window.Call("vuguGetActiveEventTarget")
+	return e.window.Call("sveGetActiveEventTarget")
 }
 
 // JSEventCurrentTarget returns the value of the "currentTarget" property of the event, the element
 // that is currently processing the event.
 func (e *DOMEvent) JSEventCurrentTarget() js.Value {
-	return e.window.Call("vuguGetActiveEventCurrentTarget")
+	return e.window.Call("sveGetActiveEventCurrentTarget")
 }
 
 // EventEnv returns the EventEnv for the current environment and allows locking and unlocking around modifications.
@@ -106,13 +106,13 @@ func (e *DOMEvent) EventEnv() EventEnv {
 // PreventDefault calls preventDefault() on the underlying DOM event.
 // May only be used within event handler in same goroutine.
 func (e *DOMEvent) PreventDefault() {
-	e.window.Call("vuguActiveEventPreventDefault")
+	e.window.Call("sveActiveEventPreventDefault")
 }
 
 // StopPropagation calls stopPropagation() on the underlying DOM event.
 // May only be used within event handler in same goroutine.
 func (e *DOMEvent) StopPropagation() {
-	e.window.Call("vuguActiveEventStopPropagation")
+	e.window.Call("sveActiveEventStopPropagation")
 }
 
 type DOMEventHandlerSpec struct {

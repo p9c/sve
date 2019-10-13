@@ -1,7 +1,7 @@
 /*
-Package distutil has some useful functions for building your Vugu application's distribution
+Package distutil has some useful functions for building your Sve application's distribution
 
-Rather than introducing third party build tools.  Authors of Vugu-based applications are
+Rather than introducing third party build tools.  Authors of Sve-based applications are
 encouraged to build their distribution files (output which is run on the production server)
 using a simple .go file which can be "go run"ed.  This package makes some common tasks simpler:
 

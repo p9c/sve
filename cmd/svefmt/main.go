@@ -11,12 +11,12 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/vugu/vugu/vugufmt"
+	"github.com/p9c/sve/svefmt"
 )
 
 var (
 	exitCode    = 0
-	list        = flag.Bool("l", false, "list files whose formatting differs from vugufmt's")
+	list        = flag.Bool("l", false, "list files whose formatting differs from svefmt's")
 	write       = flag.Bool("w", false, "write result to (source) file instead of stdout")
 	simplifyAST = flag.Bool("s", false, "simplify code")
 	imports     = flag.Bool("i", false, "run goimports instead of gofmt")
@@ -24,14 +24,14 @@ var (
 )
 
 func main() {
-	vugufmtMain()
+	svefmtMain()
 	os.Exit(exitCode)
 }
 
-func vugufmtMain() {
+func svefmtMain() {
 	// Handle input flags
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "usage: vugufmt [flags] [path ...]\n")
+		fmt.Fprintf(os.Stderr, "usage: svefmt [flags] [path ...]\n")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
@@ -65,7 +65,7 @@ func walkDir(path string) {
 }
 
 func visitFile(path string, f os.FileInfo, err error) error {
-	if err == nil && isVuguFile(f) {
+	if err == nil && isSveFile(f) {
 		err = processFile(path, nil, os.Stdout)
 	}
 
@@ -77,12 +77,12 @@ func visitFile(path string, f os.FileInfo, err error) error {
 	return nil
 }
 
-func isVuguFile(f os.FileInfo) bool {
-	// ignore non-Vugu files (except html)
+func isSveFile(f os.FileInfo) bool {
+	// ignore non-Sve files (except html)
 	name := f.Name()
 	return !f.IsDir() &&
 		!strings.HasPrefix(name, ".") &&
-		(strings.HasSuffix(name, ".vugu") || (strings.HasSuffix(name, ".html")))
+		(strings.HasSuffix(name, ".sve") || (strings.HasSuffix(name, ".html")))
 }
 
 func report(err error) {
@@ -115,11 +115,11 @@ func processFile(filename string, in io.Reader, out io.Writer) error {
 
 	var resBuff bytes.Buffer
 
-	var formatter *vugufmt.Formatter
+	var formatter *svefmt.Formatter
 	if *imports {
-		formatter = vugufmt.NewFormatter(vugufmt.UseGoImports)
+		formatter = svefmt.NewFormatter(svefmt.UseGoImports)
 	} else {
-		formatter = vugufmt.NewFormatter(vugufmt.UseGoFmt(*simplifyAST))
+		formatter = svefmt.NewFormatter(svefmt.UseGoFmt(*simplifyAST))
 	}
 
 	if !*list && !*doDiff {

@@ -4,7 +4,7 @@
 
 // This file is a modification of https://golang.org/src/cmd/gofmt/gofmt.go
 
-package vugufmt
+package svefmt
 
 import (
 	"bytes"
@@ -33,12 +33,12 @@ func writeTempFile(dir, prefix string, data []byte) (string, error) {
 }
 
 func diff(b1, b2 []byte, filename string) (data []byte, err error) {
-	f1, err := writeTempFile("", "vugufmt", b1)
+	f1, err := writeTempFile("", "svefmt", b1)
 	if err != nil {
 		return
 	}
 	defer os.Remove(f1)
-	f2, err := writeTempFile("", "vugufmt", b2)
+	f2, err := writeTempFile("", "svefmt", b2)
 	if err != nil {
 		return
 	}

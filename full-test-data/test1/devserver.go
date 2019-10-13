@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/vugu/vugu/simplehttp"
+	"github.com/p9c/sve/simplehttp"
 )
 
 func init() {
@@ -18,7 +18,7 @@ func init() {
 {{if .Title}}
 <title>{{.Title}}</title>
 {{else}}
-<title>Vugu Dev - {{.Request.URL.Path}}</title>
+<title>Sve Dev - {{.Request.URL.Path}}</title>
 {{end}}
 <meta charset="utf-8"/>
 {{if .MetaTags}}{{range $k, $v := .MetaTags}}

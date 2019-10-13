@@ -1,7 +1,7 @@
-package vugufmt
+package svefmt
 
 import (
-	"github.com/vugu/vugu/internal/htmlx"
+	"github.com/p9c/sve/internal/htmlx"
 )
 
 // tokenStack is a stack of nodes.

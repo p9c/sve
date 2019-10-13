@@ -1,6 +1,6 @@
-# vugufmt
+# svefmt
 
-gofmt, but for vugu and html files.
+gofmt, but for sve and html files.
 
 ## Goals
 
@@ -20,7 +20,7 @@ gofmt, but for vugu and html files.
 
 ## Implementation
 
-1. Use `golang.org/x/net/html` to parse the vugu file. This will probably need a tweak to handle the lack of a single root element, missing body, etc. This package has a Render function which re-prints the HTML parse tree, which we will use as the formatted output.
+1. Use `golang.org/x/net/html` to parse the sve file. This will probably need a tweak to handle the lack of a single root element, missing body, etc. This package has a Render function which re-prints the HTML parse tree, which we will use as the formatted output.
 2. Pass in text data for `<script type="application/x-go">` tags into gofmt. Capture its output.
 
 ## Sources

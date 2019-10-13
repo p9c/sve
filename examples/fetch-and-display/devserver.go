@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/vugu/vugu/simplehttp"
+	"github.com/p9c/sve/simplehttp"
 )
 
 func main() {

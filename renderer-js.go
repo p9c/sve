@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"bytes"
@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	js "github.com/vugu/vugu/js"
+	js "github.com/p9c/sve/js"
 )
 
 //go:generate go run renderer-js-script-maker.go
@@ -31,18 +31,18 @@ func NewJSRenderer(mountPointSelector string) (*JSRenderer, error) {
 
 	ret.window.Call("eval", jsHelperScript)
 
-	ret.instructionBufferJS = ret.window.Call("vuguGetRenderArray")
+	ret.instructionBufferJS = ret.window.Call("sveGetRenderArray")
 
 	ret.instructionList = newInstructionList(ret.instructionBuffer, func(il *instructionList) error {
 
-		// call vuguRender to have the instructions processed in JS
+		// call sveRender to have the instructions processed in JS
 		ret.instructionBuffer[il.pos] = 0 // ensure zero terminator
 
 		// copy the data over
 		js.CopyBytesToJS(ret.instructionBufferJS, ret.instructionBuffer)
 
-		// then call vuguRender
-		ret.window.Call("vuguRender" /*, ret.instructionBufferJS*/)
+		// then call sveRender
+		ret.window.Call("sveRender" /*, ret.instructionBufferJS*/)
 
 		return nil
 	})
@@ -64,10 +64,10 @@ func NewJSRenderer(mountPointSelector string) (*JSRenderer, error) {
 	})
 
 	// wire up the event handler func and the array that we used to communicate with instead of js.Value
-	// ret.window.Call("vuguSetEventHandlerAndBuffer", ret.eventHandlerFunc, ret.eventHandlerTypedArray)
+	// ret.window.Call("sveSetEventHandlerAndBuffer", ret.eventHandlerFunc, ret.eventHandlerTypedArray)
 
 	// wire up the event handler func
-	ret.window.Call("vuguSetEventHandler", ret.eventHandlerFunc)
+	ret.window.Call("sveSetEventHandler", ret.eventHandlerFunc)
 
 	// log.Printf("ret.window: %#v", ret.window)
 	// log.Printf("eval: %#v", ret.window.Get("eval"))
@@ -174,7 +174,7 @@ func (r *JSRenderer) Render(buildResults *BuildResults) error {
 	// Perhaps we have separately logic for the <head>, and then otherwise we still have a designated
 	// element within body which is what we target.  It should be possible to just make this the body
 	// tag if nobody care, but if they need to be able to do other custom stuff outside of head, it should
-	// be possible - while still controlling title and meta tags etc from the Vugu app.
+	// be possible - while still controlling title and meta tags etc from the Sve app.
 
 	// const (
 	// 	modeHTML          int = iota // in html tag
@@ -198,7 +198,7 @@ func (r *JSRenderer) Render(buildResults *BuildResults) error {
 	// _ = mode
 
 	// TODO: we need to make sure this call path back and forth to the outside for DOM syncing is
-	// efficient - it determines Vugu's overall performance characteristics to a large degree.
+	// efficient - it determines Sve's overall performance characteristics to a large degree.
 	// Do some tests and see what the performance difference is if pass data directly using Call()
 	// a number of times vs shipping JSON over in an ArrayBuffer and parse and process it in JS.
 	// NOTE: doing Call() all over the place and getting/passing various element referances around

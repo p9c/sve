@@ -5,7 +5,7 @@
 package htmlx
 
 import (
-	"github.com/vugu/vugu/internal/htmlx/atom"
+	"github.com/p9c/sve/internal/htmlx/atom"
 )
 
 // A NodeType is the type of a Node.

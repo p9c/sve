@@ -21,15 +21,15 @@ func TestSimpleHandlerDev(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	wd, _ := os.Getwd()
-	vugudir, _ := filepath.Abs(filepath.Join(wd, ".."))
+	svedir, _ := filepath.Abs(filepath.Join(wd, ".."))
 
-	// write a go.mod that points vugu module to use our local path instead of pulling from github
+	// write a go.mod that points sve module to use our local path instead of pulling from github
 	assert.NoError(ioutil.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(`
 module example.com/test
-replace github.com/vugu/vugu => `+vugudir+`
+replace github.com/p9c/sve => `+svedir+`
 	`), 0644))
 
-	assert.NoError(ioutil.WriteFile(filepath.Join(tmpDir, "root.vugu"), []byte(`
+	assert.NoError(ioutil.WriteFile(filepath.Join(tmpDir, "root.sve"), []byte(`
 <div>I Am Root</div>
 `), 0644))
 
@@ -60,15 +60,15 @@ func TestSimpleHandlerProd(t *testing.T) {
 	defer os.RemoveAll(tmpDir)
 
 	wd, _ := os.Getwd()
-	vugudir, _ := filepath.Abs(filepath.Join(wd, ".."))
+	svedir, _ := filepath.Abs(filepath.Join(wd, ".."))
 
-	// write a go.mod that points vugu module to use our local path instead of pulling from github
+	// write a go.mod that points sve module to use our local path instead of pulling from github
 	assert.NoError(ioutil.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(`
 module example.com/test
-replace github.com/vugu/vugu => `+vugudir+`
+replace github.com/p9c/sve => `+svedir+`
 	`), 0644))
 
-	assert.NoError(ioutil.WriteFile(filepath.Join(tmpDir, "root.vugu"), []byte(`
+	assert.NoError(ioutil.WriteFile(filepath.Join(tmpDir, "root.sve"), []byte(`
 <div>I Am Root</div>
 `), 0644))
 

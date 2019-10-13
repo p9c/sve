@@ -1,10 +1,10 @@
-package vugu
+package sve
 
 import (
 	"sync"
 	"testing"
-	// "github.com/vugu/html"
-	// "github.com/vugu/html/atom"
+	// "github.com/sve/html"
+	// "github.com/sve/html/atom"
 	// html "golang.org/x/net/html"
 	// atom "golang.org/x/net/html/atom"
 )

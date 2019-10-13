@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"bytes"
@@ -204,7 +204,7 @@ type BeforeBuilder interface {
 
 // // ComponentType is implemented by any type that wants to be a component.
 // // The BuildVDOM method is called to generate the virtual DOM for a component; and this method
-// // is usually code generated (by ParserGo) from a .vugu file.
+// // is usually code generated (by ParserGo) from a .sve file.
 // // NewData provides for specific behavior when a component is initialized.
 // type ComponentType interface {
 // 	BuildVDOM(data interface{}) (vdom *VGNode, css *VGNode, reterr error) // based on the given data, build the VGNode tree

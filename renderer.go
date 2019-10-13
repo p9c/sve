@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 // Renderer takes a BuildOut ("virtual DOM") and renders it to it's final output.
 type Renderer interface {

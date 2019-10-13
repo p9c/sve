@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **Software Versions**
-Vugu version: 
+Sve version: 
 Go version: 
 Browser and version:
 

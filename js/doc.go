@@ -12,7 +12,7 @@ Value.Call(), FuncOf() and other such functions will panic.  Value.Truthy() will
 For example, Global().Truthy() can be used to determine if the js environment is functional.
 
 Rationale: Since syscall/js is only available when the GOOS is "js", this means programs which run server-side
-cannot access that package and will fail to compile.  Since Vugu components are inherently closely
+cannot access that package and will fail to compile.  Since Sve components are inherently closely
 integrated with browsers and may often need to do things like declare variables of type js.Value,
 this is a problem for components which are rendered not only in wasm client-side but also server-side.
 Build tags can be used to provide multiple implementations of a components but this can become tedious.

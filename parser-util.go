@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"go/ast"
@@ -9,10 +9,10 @@ import (
 	"sort"
 	"strings"
 
-	// "github.com/vugu/vugu/internal/htmlx"
+	html "github.com/p9c/sve/internal/htmlx"
 
 	// "golang.org/x/net/html"
-	"github.com/vugu/html"
+	//"github.com/sve/html"
 )
 
 func attrFromHtml(attr html.Attribute) VGAttribute {

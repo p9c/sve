@@ -9,7 +9,7 @@
 <script type="application/x-go">
 
 type DemoLine struct {
-    Num int `vugu:"data"`
+    Num int `sve:"data"`
 }
 
 </script>

@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"bytes"
@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	// "github.com/vugu/vugu/internal/htmlx"
+	// "github.com/p9c/sve/internal/htmlx"
 	// "golang.org/x/net/html"
-	"github.com/vugu/html"
+	"github.com/sve/html"
 )
 
 func TestCompactNodeTree(t *testing.T) {

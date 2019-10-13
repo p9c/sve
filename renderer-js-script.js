@@ -1,7 +1,7 @@
 
 (function() {
 
-	if (window.vuguRender) { return; } // only once
+	if (window.sveRender) { return; } // only once
 
     const opcodeEnd = 0         // no more instructions in this buffer
     // const opcodeClearRefmap = 1 // clear the reference map, all following instructions must not reference prior IDs
@@ -76,69 +76,69 @@
 
     let utf8decoder = new TextDecoder();
 
-    window.vuguGetActiveEvent = function() {
-        let state = window.vuguState || {}; window.vuguState = state;
+    window.sveGetActiveEvent = function() {
+        let state = window.sveState || {}; window.sveState = state;
         return state.activeEvent;
     }
-    window.vuguGetActiveEventTarget = function() {
-        let state = window.vuguState || {}; window.vuguState = state;
+    window.sveGetActiveEventTarget = function() {
+        let state = window.sveState || {}; window.sveState = state;
         return state.activeEvent && state.activeEvent.target;
     }
-    window.vuguGetActiveEventCurrentTarget = function() {
-        let state = window.vuguState || {}; window.vuguState = state;
+    window.sveGetActiveEventCurrentTarget = function() {
+        let state = window.sveState || {}; window.sveState = state;
         return state.activeEvent && state.activeEvent.currentTarget;
     }
-    window.vuguActiveEventPreventDefault = function() {
-        let state = window.vuguState || {}; window.vuguState = state;
+    window.sveActiveEventPreventDefault = function() {
+        let state = window.sveState || {}; window.sveState = state;
         if (state.activeEvent && state.activeEvent.preventDefault) {
             state.activeEvent.preventDefault();
         }
     }
-    window.vuguActiveEventStopPropagation = function() {
-        let state = window.vuguState || {}; window.vuguState = state;
+    window.sveActiveEventStopPropagation = function() {
+        let state = window.sveState || {}; window.sveState = state;
         if (state.activeEvent && state.activeEvent.stopPropagation) {
             state.activeEvent.stopPropagation();
         }
     }
 
-	// window.vuguSetEventHandlerAndBuffer = function(eventHandlerFunc, eventBuffer) { 
-	// 	let state = window.vuguState || {};
-    //     window.vuguState = state;
+	// window.sveSetEventHandlerAndBuffer = function(eventHandlerFunc, eventBuffer) { 
+	// 	let state = window.sveState || {};
+    //     window.sveState = state;
     //     state.eventBuffer = eventBuffer;
     //     state.eventBufferView = new DataView(eventBuffer.buffer, eventBuffer.byteOffset, eventBuffer.byteLength);
     //     state.eventHandlerFunc = eventHandlerFunc;
     // }
 
-    window.vuguSetEventHandler = function(eventHandlerFunc) { 
-		let state = window.vuguState || {};
-        window.vuguState = state;
+    window.sveSetEventHandler = function(eventHandlerFunc) { 
+		let state = window.sveState || {};
+        window.sveState = state;
         state.eventHandlerFunc = eventHandlerFunc;
     }
 
-    window.vuguGetRenderArray = function() {
-        if (!window.vuguRenderArray) {
-            window.vuguRenderArray = new Uint8Array(16384);
+    window.sveGetRenderArray = function() {
+        if (!window.sveRenderArray) {
+            window.sveRenderArray = new Uint8Array(16384);
         }
-        return window.vuguRenderArray;
+        return window.sveRenderArray;
     }
 
-	window.vuguRender = function() { 
+	window.sveRender = function() { 
         
-        let buffer = window.vuguRenderArray;
-        if (!window.vuguRenderArray) {
-            throw "window.vuguRenderArray is not set";
+        let buffer = window.sveRenderArray;
+        if (!window.sveRenderArray) {
+            throw "window.sveRenderArray is not set";
         }
 
-        // NOTE: vuguRender must not automatically reset anything between calls.
+        // NOTE: sveRender must not automatically reset anything between calls.
         // Since a series of instructions might get cut off due to buffer end, we
         // need to be able to just pick right up with the next call where we left off.
         // The caller decides when to reset things by sending the appropriate
         // instruction(s).
 
-		let state = window.vuguState || {};
-		window.vuguState = state;
+		let state = window.sveState || {};
+		window.sveState = state;
 
-		console.log("vuguRender called");
+		console.log("sveRender called");
 
         let textEncoder = new TextEncoder();
 
@@ -719,8 +719,8 @@
                         // * find all tags that have the same element type (link or style)
                         // * for each one for style use textContent as key, for link use url
                         // * see if matching tag already exists
-                        // * if it has vuguCreated==true on it, then add to map of css tags set, else ignore
-                        // * if no matching tag then create and set vuguCreated=true, add to map of css tags set
+                        // * if it has sveCreated==true on it, then add to map of css tags set, else ignore
+                        // * if no matching tag then create and set sveCreated=true, add to map of css tags set
 
                         let foundTag = null;
                         this.document.querySelectorAll(elementName).forEach(cssEl => {
@@ -742,7 +742,7 @@
                             for (let k in attrMap) {
                                 cTag.setAttribute(k, attrMap[k]);
                             }
-                            cTag.vuguCreated = true; // so we know that we created this, as opposed to it already having been on the page
+                            cTag.sveCreated = true; // so we know that we created this, as opposed to it already having been on the page
                             this.console.log("GOT TEXTCONTENT: ", textContent);
                             if (textContent) {
                                 cTag.appendChild(document.createTextNode(textContent)) // set textContent if provided
@@ -762,14 +762,14 @@
 
                         this.console.log("got opcodeRemoveOtherCSSTags");
 
-                        // any link or style tag in doc that has vuguCreated==true and is not in css tags set map gets removed
+                        // any link or style tag in doc that has sveCreated==true and is not in css tags set map gets removed
 
                         state.elCSSTagsSet = state.elCSSTagsSet || [];
 
                         this.document.querySelectorAll('style,link').forEach(cssEl => {
 
-                            // ignore any not created by vugu
-                            if (!cssEl.vuguCreated) { return; }
+                            // ignore any not created by sve
+                            if (!cssEl.sveCreated) { return; }
 
                             // ignore if in elCSSTagsSet
                             if (state.elCSSTagsSet.findIndex(el => el==cssEl) >= 0) { return; }

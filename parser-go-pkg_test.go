@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"io/ioutil"
@@ -24,7 +24,7 @@ func TestParseGoPkgRun(t *testing.T) {
 	// module main
 	// `), 0644))
 
-	assert.NoError(ioutil.WriteFile(filepath.Join(tmpDir, "root.vugu"), []byte(`
+	assert.NoError(ioutil.WriteFile(filepath.Join(tmpDir, "root.sve"), []byte(`
 <div id="root_comp">
 	<h1>Hello!</h1>
 </div>

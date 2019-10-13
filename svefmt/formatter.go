@@ -1,4 +1,4 @@
-package vugufmt
+package svefmt
 
 import (
 	"bytes"
@@ -9,11 +9,11 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/vugu/vugu/internal/htmlx"
-	"github.com/vugu/vugu/internal/htmlx/atom"
+	"github.com/p9c/sve/internal/htmlx"
+	"github.com/p9c/sve/internal/htmlx/atom"
 )
 
-// Formatter allows you to format vugu files.
+// Formatter allows you to format sve files.
 type Formatter struct {
 	// ScriptFormatters maps script blocks to formatting
 	// functions.
@@ -30,8 +30,8 @@ type Formatter struct {
 }
 
 // NewFormatter creates a new formatter.
-// Pass in vugufmt.UseGoFmt to use gofmt.
-// Pass in vugufmt.UseGoImports to use goimports.
+// Pass in svefmt.UseGoFmt to use gofmt.
+// Pass in svefmt.UseGoImports to use goimports.
 func NewFormatter(opts ...func(*Formatter)) *Formatter {
 	f := &Formatter{
 		ScriptFormatters: make(map[string](func([]byte) ([]byte, *FmtError))),

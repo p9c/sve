@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"bytes"
@@ -87,7 +87,7 @@ func (mt *ModTracker) dump() []byte {
 // Pointers to supported types are supported.
 // Arrays, slices and maps(nope!) using supported types are supported.
 // Pointers to structs will be checked by
-// checking each field with a struct tag like `vugu:"modcheck"`.  Slices and arrays of
+// checking each field with a struct tag like `sve:"modcheck"`.  Slices and arrays of
 // structs are okay, since their members have a stable position in memory and a pointer
 // can be taken.  Maps using structs however must use pointers to them
 // (restriction applies to both keys and values) to be supported.
@@ -96,7 +96,7 @@ func (mt *ModTracker) dump() []byte {
 // For values implementing the ModChecker interface, the ModCheck method will be called.
 // All values passed should be pointers to the types described below.
 // Single-value primitive types are supported.  Structs are supported and
-// and are traversed by calling ModCheckAll on each with the tag `vugu:"modcheck"`.
+// and are traversed by calling ModCheckAll on each with the tag `sve:"modcheck"`.
 // Arrays and slices of supported types are supported, their length is compared as well
 // as a pointer to each member.
 // As a special case []byte is treated like a string.
@@ -324,7 +324,7 @@ func (mt *ModTracker) ModCheckAll(values ...interface{}) (ret bool) {
 				rvvt := rvv.Type()
 				for i := 0; i < rvvt.NumField(); i++ {
 					// skip untagged fields
-					if !hasTagPart(rvvt.Field(i).Tag.Get("vugu"), "data") {
+					if !hasTagPart(rvvt.Field(i).Tag.Get("sve"), "data") {
 						continue
 					}
 

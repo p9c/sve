@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"encoding/binary"

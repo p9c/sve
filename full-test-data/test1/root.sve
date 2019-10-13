@@ -15,7 +15,7 @@ type Root struct {
     Success bool
 }
 
-func (c *Root) OnClickRun(event *vugu.DOMEvent, n int) {
+func (c *Root) OnClickRun(event *sve.DOMEvent, n int) {
     c.Success = !c.Success
     //log.Printf("HEY, GOT HERE!")
 }

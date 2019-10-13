@@ -1,4 +1,4 @@
-package vugufmt
+package svefmt
 
 import (
 	"bytes"
@@ -39,13 +39,13 @@ func TestOptsGoImports(t *testing.T) {
 	assert.NotNil(t, goimports, formatter.ScriptFormatters["application/x-go"])
 }
 
-func TestVuguFmtNoError(t *testing.T) {
+func TestSveFmtNoError(t *testing.T) {
 	formatter := NewFormatter(UseGoFmt(false))
 	fmtr := func(f string) {
 		// Need to un-relativize the paths
 		absPath, err := filepath.Abs(f)
 
-		if filepath.Ext(absPath) != ".vugu" {
+		if filepath.Ext(absPath) != ".sve" {
 			return
 		}
 
@@ -81,7 +81,7 @@ func TestUncompilableGo(t *testing.T) {
 		// Need to un-relativize the paths
 		absPath, err := filepath.Abs(f)
 
-		if filepath.Ext(absPath) != ".vugu" {
+		if filepath.Ext(absPath) != ".sve" {
 			return
 		}
 
@@ -99,7 +99,7 @@ func TestUncompilableGo(t *testing.T) {
 		assert.Equal(t, 22, ferr.Column, f)
 	}
 
-	fmtr("./testdata/bad/badgo.vugu")
+	fmtr("./testdata/bad/badgo.sve")
 
 }
 

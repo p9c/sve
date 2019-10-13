@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"bytes"
@@ -6,9 +6,9 @@ import (
 	"strings"
 	"unicode"
 
-	// "github.com/vugu/vugu/internal/html"
+	html "github.com/p9c/sve/internal/htmlx"
 	// "golang.org/x/net/html"
-	"github.com/vugu/html"
+	//"github.com/sve/html"
 )
 
 // compactNodeTree operates on a Node tree in-place and find elements with static

@@ -32,7 +32,7 @@
 <script type="application/x-go">
 
 type Root struct {
-    ItemCount int `vugu:"data"`
+    ItemCount int `sve:"data"`
 }
 
 func (c *Root) BeforeBuild() {

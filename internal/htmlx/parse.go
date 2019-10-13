@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	a "github.com/vugu/vugu/internal/htmlx/atom"
+	a "github.com/p9c/sve/internal/htmlx/atom"
 )
 
 // A parser implements the HTML5 parsing algorithm:

@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 // ChangeCounter is a number that can be incremented to indicate modification.
 // The ModCheck method is implemented using this number.

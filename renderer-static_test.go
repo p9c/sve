@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"fmt"
@@ -30,15 +30,15 @@ func TestRendererStatic(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// put a go.mod here that points back to the local copy of vugu
+	// put a go.mod here that points back to the local copy of sve
 	err = ioutil.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(fmt.Sprintf(`module test-render-static
-replace github.com/vugu/vugu => %s
-require github.com/vugu/vugu v0.0.0-00010101000000-000000000000
+replace github.com/p9c/sve => %s
+require github.com/p9c/sve v0.0.0-00010101000000-000000000000
 `, wd)), 0644)
 
 	// output some components
 
-	err = ioutil.WriteFile(filepath.Join(tmpDir, "root.vugu"), []byte(`<html>
+	err = ioutil.WriteFile(filepath.Join(tmpDir, "root.sve"), []byte(`<html>
 <head>
 <title>testing!</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
@@ -55,7 +55,7 @@ require github.com/vugu/vugu v0.0.0-00010101000000-000000000000
 		t.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(filepath.Join(tmpDir, "comp1.vugu"), []byte(`<span>
+	err = ioutil.WriteFile(filepath.Join(tmpDir, "comp1.sve"), []byte(`<span>
 comp1 in the house
 <div vg-html='"<p>Some <strong>nested</strong> craziness</p>"'></div>
 </span>`), 0644)
@@ -63,7 +63,7 @@ comp1 in the house
 		t.Fatal(err)
 	}
 
-	// run the vugu codegen
+	// run the sve codegen
 
 	p := NewParserGoPkg(tmpDir, nil)
 	err = p.Run()
@@ -83,12 +83,12 @@ import (
 	"flag"
 	"os"
 
-	"github.com/vugu/vugu"
+	"github.com/p9c/sve"
 )
 
 func main() {
 
-	//mountPoint := flag.String("mount-point", "#vugu_mount_point", "The query selector for the mount point for the root component, if it is not a full HTML component")
+	//mountPoint := flag.String("mount-point", "#sve_mount_point", "The query selector for the mount point for the root component, if it is not a full HTML component")
 	flag.Parse()
 
 	//fmt.Printf("Entering main(), -mount-point=%q\n", *mountPoint)
@@ -96,12 +96,12 @@ func main() {
 
 	rootBuilder := &Root{}
 
-	buildEnv, err := vugu.NewBuildEnv()
+	buildEnv, err := sve.NewBuildEnv()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	renderer := vugu.NewStaticRenderer(os.Stdout)
+	renderer := sve.NewStaticRenderer(os.Stdout)
 
 	buildResults := buildEnv.RunBuild(rootBuilder)
 

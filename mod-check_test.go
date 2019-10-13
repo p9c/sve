@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 import (
 	"encoding/json"
@@ -15,18 +15,18 @@ func TestModCheckerWidget(t *testing.T) {
 	mt := NewModTracker()
 
 	type Tag struct {
-		Name  string `vugu:"data" json:"name"`
-		Style int    `vugu:"data" json:"style"`
+		Name  string `sve:"data" json:"name"`
+		Style int    `sve:"data" json:"style"`
 	}
 
 	type Widget struct {
-		ID           int64   `vugu:"data" json:"id"`
-		Name         string  `vugu:"data" json:"name"`
-		Description  *string `vugu:"data" json:"description"`
-		Active       bool    `vugu:"data" json:"active"`
-		StockCount   *int32  `vugu:"data" json:"stock_count"`
-		Tags         []Tag   `vugu:"data" json:"tags"`
-		FeaturedTags []*Tag  `vugu:"data" json:"-"` // calculated separately after loading
+		ID           int64   `sve:"data" json:"id"`
+		Name         string  `sve:"data" json:"name"`
+		Description  *string `sve:"data" json:"description"`
+		Active       bool    `sve:"data" json:"active"`
+		StockCount   *int32  `sve:"data" json:"stock_count"`
+		Tags         []Tag   `sve:"data" json:"tags"`
+		FeaturedTags []*Tag  `sve:"data" json:"-"` // calculated separately after loading
 	}
 
 	wjson := `
@@ -188,8 +188,8 @@ func TestModCheckerStruct(t *testing.T) {
 	mt := NewModTracker()
 
 	var s1 struct {
-		F1 string  `vugu:"data"`
-		F2 int     `vugu:"data"`
+		F1 string  `sve:"data"`
+		F2 int     `sve:"data"`
 		F3 float64 // not tagged
 	}
 

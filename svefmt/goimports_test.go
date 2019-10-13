@@ -1,4 +1,4 @@
-package vugufmt
+package svefmt
 
 import (
 	"io/ioutil"
@@ -9,11 +9,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TestGoFmtNoError makes sure that the runGoFmt function
+// TestGoImportsNoError makes sure that the runGoImports function
 // returns expected output when it deals with go code that
 // is perfectly formatted. It uses all the .go files in this
 // package to test against.
-func TestGoFmtNoError(t *testing.T) {
+func TestGoImportsNoError(t *testing.T) {
 
 	fmt := func(f string) {
 		// Need to un-relativize the paths
@@ -28,8 +28,8 @@ func TestGoFmtNoError(t *testing.T) {
 		testFile, err := ioutil.ReadFile(absPath)
 		testFileString := string(testFile)
 		assert.Nil(t, err, f)
-		// run gofmt on it
-		out, err := runGoFmt([]byte(testFileString), false)
+		// run goimports on it
+		out, err := runGoImports([]byte(testFileString))
 		assert.Nil(t, err, f)
 		// make sure nothing changed!
 		assert.NotNil(t, string(out), f)
@@ -44,12 +44,12 @@ func TestGoFmtNoError(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-// TestGoFmtError confirms that gofmt is successfully detecting
+// TestGoImportsError confirms that goimports is successfully detecting
 // an error, and is reporting it in the expected format.
-func TestGoFmtError(t *testing.T) {
+func TestGoImportsError(t *testing.T) {
 	testCode := "package yeah\n\nvar hey := woo\n"
-	// run gofmt on it
-	_, err := runGoFmt([]byte(testCode), false)
+	// run goimports on it
+	_, err := runGoImports([]byte(testCode))
 	assert.NotNil(t, err)
 	assert.Equal(t, 3, err.Line)
 	assert.Equal(t, 9, err.Column)

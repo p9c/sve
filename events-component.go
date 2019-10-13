@@ -1,4 +1,4 @@
-package vugu
+package sve
 
 // TODO: we definitely need component events, not sure how yet...
 

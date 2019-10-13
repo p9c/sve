@@ -1,10 +1,10 @@
 /*
-Package simplehttp provides an http.Handler that makes it easy to serve Vugu applications.
+Package simplehttp provides an http.Handler that makes it easy to serve Sve applications.
 Useful for development and production.
 
-The idea is that the common behaviors needed to serve a Vugu site are readily available
+The idea is that the common behaviors needed to serve a Sve site are readily available
 in one place.   If you require more functionality than simplehttp provides, nearly everything
-it does is available in the github.com/vugu/vugu package and you can construct what you
+it does is available in the github.com/p9c/sve package and you can construct what you
 need from its parts.  That said, simplehttp should make it easy to start:
 
 
@@ -44,16 +44,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/vugu/vugu"
+	"github.com/p9c/sve"
 )
 
-// SimpleHandler provides common web serving functionality useful for building Vugu sites.
+// SimpleHandler provides common web serving functionality useful for building Sve sites.
 type SimpleHandler struct {
 	Dir string // project directory
 
 	EnableBuildAndServe          bool                  // enables the build-and-serve sequence for your wasm binary - useful for dev, should be off in production
 	EnableGenerate               bool                  // if true calls `go generate` (requires EnableBuildAndServe)
-	ParserGoPkgOpts              *vugu.ParserGoPkgOpts // if set enables running ParserGoPkg with these options (requires EnableBuildAndServe)
+	ParserGoPkgOpts              *sve.ParserGoPkgOpts // if set enables running ParserGoPkg with these options (requires EnableBuildAndServe)
 	DisableBuildCache            bool                  // if true then rebuild every time instead of trying to cache (requires EnableBuildAndServe)
 	DisableTimestampPreservation bool                  // if true don't try to keep timestamps the same for files that are byte for byte identical (requires EnableBuildAndServe)
 	MainWasmPath                 string                // path to serve main wasm file from, in dev mod defaults to "/main.wasm" (requires EnableBuildAndServe)
@@ -100,7 +100,7 @@ func New(dir string, dev bool) *SimpleHandler {
 
 	if dev {
 		ret.EnableBuildAndServe = true
-		ret.ParserGoPkgOpts = &vugu.ParserGoPkgOpts{}
+		ret.ParserGoPkgOpts = &sve.ParserGoPkgOpts{}
 		ret.MainWasmPath = "/main.wasm"
 		ret.WasmExecJsPath = "/wasm_exec.js"
 	}
@@ -191,7 +191,7 @@ doBuild:
 	{
 
 		if h.ParserGoPkgOpts != nil {
-			pg := vugu.NewParserGoPkg(h.Dir, h.ParserGoPkgOpts)
+			pg := sve.NewParserGoPkg(h.Dir, h.ParserGoPkgOpts)
 			err := pg.Run()
 			if err != nil {
 				msg := fmt.Sprintf("Error from ParserGoPkg: %v", err)
@@ -384,7 +384,7 @@ var DefaultPageTemplateSource = `<!doctype html>
 {{if .Title}}
 <title>{{.Title}}</title>
 {{else}}
-<title>Vugu Dev - {{.Request.URL.Path}}</title>
+<title>Sve Dev - {{.Request.URL.Path}}</title>
 {{end}}
 <meta charset="utf-8"/>
 {{if .MetaTags}}{{range $k, $v := .MetaTags}}
@@ -397,7 +397,7 @@ var DefaultPageTemplateSource = `<!doctype html>
 <script src="/wasm_exec.js"></script>
 </head>
 <body>
-<div id="vugu_mount_point">
+<div id="sve_mount_point">
 {{if .ServerRenderedOutput}}{{.ServerRenderedOutput}}{{else}}
 <img style="position: absolute; top: 50%; left: 50%;" src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif">
 {{end}}
@@ -416,7 +416,7 @@ if (wasmSupported) {
 		go.run(result.instance);
 	});
 } else {
-	document.getElementById("vugu_mount_point").innerHTML = 'This application requires WebAssembly support.  Please upgrade your browser.';
+	document.getElementById("sve_mount_point").innerHTML = 'This application requires WebAssembly support.  Please upgrade your browser.';
 }
 </script>
 </body>
