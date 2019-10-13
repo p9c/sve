@@ -4,7 +4,7 @@ import (
 	"sync"
 	"testing"
 	// "github.com/p9c/sve/html"
-	// "github.com/sve/html/atom"
+	// "github.com/p9c/sve/html/atom"
 	// html "golang.org/x/net/html"
 	// atom "golang.org/x/net/html/atom"
 )
