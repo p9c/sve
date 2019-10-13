@@ -9,10 +9,10 @@ import (
 	"sort"
 	"strings"
 
-	html "github.com/p9c/sve/internal/htmlx"
+	//html "github.com/p9c/sve/internal/htmlx"
 
 	// "golang.org/x/net/html"
-	//"github.com/sve/html"
+	"github.com/sve/html"
 )
 
 func attrFromHtml(attr html.Attribute) VGAttribute {

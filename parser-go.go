@@ -12,12 +12,12 @@ import (
 	"strings"
 	"unicode"
 
-	html "github.com/p9c/sve/internal/htmlx"
-	"github.com/p9c/sve/internal/htmlx/atom"
+	//html "github.com/p9c/sve/internal/htmlx"
+	//"github.com/p9c/sve/internal/htmlx/atom"
 	// "golang.org/x/net/html"
 	// "golang.org/x/net/html/atom"
-	//"github.com/sve/html"
-	//"github.com/sve/html/atom"
+	"github.com/sve/html"
+	"github.com/sve/html/atom"
 )
 
 // ParserGo is a template parser that emits Go source code that will construct the appropriately wired VGNodes.
