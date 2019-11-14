@@ -13,7 +13,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/p9c/sve/pkg/js"
+	"github.com/p9c/sve/js"
 )
 
 // NewJSRenderer will create a new JSRenderer with the speicifc mount point selector.

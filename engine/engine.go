@@ -6,9 +6,9 @@ import (
 	"github.com/p9c/sve/engine/component"
 	"github.com/p9c/sve/engine/render"
 	"github.com/p9c/sve/pkg/simplehttp"
-	"github.com/therecipe/qt/core"
-	"github.com/therecipe/qt/webengine"
-	"github.com/therecipe/qt/widgets"
+	"github.com/p9c/sve/pkg/qt/core"
+	"github.com/p9c/sve/pkg/qt/webengine"
+	"github.com/p9c/sve/pkg/qt/widgets"
 	"log"
 	"net/http"
 	"os"
@@ -20,13 +20,16 @@ Engine() {
 	widgets.NewQApplication(len(os.Args), os.Args)
 	//var qmlBridge *QmlBridge
 
-	wd, _ := os.Getwd()
+	//wd, _ := os.Getwd()
+	var view = webengine.NewQWebEngineView(nil)
+	//view.SetUrl(QUrl("qrc:/index.html"))
+	view.Load(core.NewQUrl3("qrc:/index.html", 0))
 
 	mountPoint := flag.String("mount-point", "#sve_mount_point", "The query selector for the mount point for the root component, if it is not a full HTML component")
 	flag.Parse()
 
-	fmt.Printf("Entering main(), -mount-point=%q\n", *mountPoint)
-	defer fmt.Printf("Exiting main()\n")
+	//fmt.Printf("Entering main(), -mount-point=%q\n", *mountPoint)
+	//defer fmt.Printf("Exiting main()\n")
 
 	rootBuilder := &Root{
 
@@ -52,9 +55,7 @@ Engine() {
 			panic(err)
 		}
 	}
-	var view = webengine.NewQWebEngineView(nil)
-	//view.SetUrl(QUrl("qrc:/index.html"))
-	view.Load(core.NewQUrl3("qrc:/index.html", 0))
+
 	//
 	////used this because QLabel got no clicked signal
 	//view.ConnectMousePressEvent(func(ev *gui.QMouseEvent) {
@@ -81,10 +82,10 @@ Engine() {
 	//}()
 	//show label (which will act as a window)
 	view.Show()
-	l := ":8875"
-	log.Printf("Starting HTTP Server at %q", l)
-	h := simplehttp.New(wd, true)
-	log.Fatal(http.ListenAndServe(l, h))
+	//l := ":8875"
+	//log.Printf("Starting HTTP Server at %q", l)
+	//h := simplehttp.New(wd, true)
+	//log.Fatal(http.ListenAndServe(l, h))
 
 	widgets.QApplication_Exec()
 }

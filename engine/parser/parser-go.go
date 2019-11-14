@@ -220,7 +220,7 @@ func (p *ParserGo) visitOverall(state *parseGoState) error {
 	fmt.Fprintf(&state.goBuf, "import %q\n", "reflect")
 	fmt.Fprintf(&state.goBuf, "import %q\n", "encoding/json")
 	fmt.Fprintf(&state.goBuf, "import %q\n", "github.com/p9c/sve/engine/parser")
-	fmt.Fprintf(&state.goBuf, "import js %q\n", "github.com/p9c/sve/pkg/js")
+	fmt.Fprintf(&state.goBuf, "import js %q\n", "github.com/p9c/sve/js")
 	fmt.Fprintf(&state.goBuf, "\n")
 
 	// TODO: we use a prefix like "vg" as our namespace; should document that user code should not use that prefix to avoid conflicts

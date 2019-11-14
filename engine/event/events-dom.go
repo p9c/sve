@@ -3,7 +3,7 @@ package event
 import (
 	"sync"
 
-	"github.com/p9c/sve/pkg/js"
+	"github.com/p9c/sve/js"
 )
 
 // DOMEvent is an event originated in the browser.  It wraps the JS event that comes in.
