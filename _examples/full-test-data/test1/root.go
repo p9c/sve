@@ -5,10 +5,11 @@ package main
 import (
 	"fmt"
 	"github.com/p9c/sve/engine/component"
+	"github.com/p9c/sve/engine/event"
 )
 import "reflect"
 import "github.com/p9c/sve/engine"
-import js "github.com/p9c/sve/js"
+import "github.com/p9c/sve/js"
 
 //import "log"
 
@@ -17,7 +18,7 @@ type Root struct {
 	Success   bool
 }
 
-func (c *Root) OnClickRun(event *engine.DOMEvent, n int) {
+func (c *Root) OnClickRun(event *event.DOMEvent, n int) {
 	c.Success = !c.Success
 	//log.Printf("HEY, GOT HERE!")
 }

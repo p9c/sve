@@ -7,10 +7,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/p9c/sve/pkg/qt/cmd"
-	"github.com/p9c/sve/pkg/qt/cmd/setup"
+	"github.com/therecipe/qt/cmd"
+	"github.com/therecipe/qt/cmd/setup"
 
-	"github.com/p9c/sve/pkg/qt/utils"
+	"github.com/therecipe/qt/utils"
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 	}
 
 	flag.Usage = func() {
-		println("Usage: qtsetup [-debug] [mode] [target]\n")
+		println("Usage: svesetup [-debug] [mode] [target]\n")
 
 		println("Flags:\n")
 		flag.PrintDefaults()

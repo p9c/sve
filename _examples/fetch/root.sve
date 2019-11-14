@@ -16,6 +16,13 @@ import "encoding/json"
 import "net/http"
 import "log"
 
+
+type Root struct {
+    Something int
+    Success bool
+}
+
+
 type RootData struct {
     bpi bpi
     isLoading bool

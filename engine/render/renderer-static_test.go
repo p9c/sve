@@ -30,11 +30,11 @@ func TestRendererStatic(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// put a go.mod here that points back to the local copy of sve
-	err = ioutil.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(fmt.Sprintf(`module test-render-static
-replace github.com/p9c/sve => %s
-require github.com/p9c/sve v0.0.0-00010101000000-000000000000
-`, wd)), 0644)
+//	// put a go.mod here that points back to the local copy of sve
+//	err = ioutil.WriteFile(filepath.Join(tmpDir, "go.mod"), []byte(fmt.Sprintf(`module test-render-static
+//replace github.com/p9c/sve => %s
+//require github.com/p9c/sve v0.0.0-00010101000000-000000000000
+//`, wd)), 0644)
 
 	// output some components
 
