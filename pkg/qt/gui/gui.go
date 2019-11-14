@@ -8,8 +8,8 @@ package gui
 //#include "gui.h"
 import "C"
 import (
-	"github.com/therecipe/qt"
-	"github.com/therecipe/qt/core"
+	"github.com/p9c/sve/pkg/qt"
+	"github.com/p9c/sve/pkg/qt/core"
 	"runtime"
 	"strings"
 	"unsafe"
