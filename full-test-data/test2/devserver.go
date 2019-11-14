@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/p9c/sve/simplehttp"
+	"github.com/p9c/sve/pkg/simplehttp"
 )
 
 func main() {

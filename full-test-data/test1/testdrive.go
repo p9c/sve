@@ -1,13 +1,13 @@
 // +build ignore
 
-package main 
+package main
 
 import (
 	"context"
 	"log"
-	"time"
 	"os"
-	
+	"time"
+
 	"github.com/chromedp/chromedp"
 )
 
@@ -18,7 +18,7 @@ func main() {
 	defer os.Remove("main_wasm.go")
 	defer os.Remove("go.sum")
 
-	ctx, cancel := chromedp.NewContext(context.Background(),chromedp.WithLogf(log.Printf))
+	ctx, cancel := chromedp.NewContext(context.Background(), chromedp.WithLogf(log.Printf))
 	defer cancel()
 	ctx, cancel = context.WithTimeout(ctx, 15*time.Second)
 	defer cancel()

@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+		<file alias="index.html">assets/index.html</file>
+        <file alias="manifest.json">assets/manifest.json</file>
+        <file alias="sw.js">assets/sw.js</file>
+        <file alias="img/loader.gif">assets/img/loader.gif</file>
+        <file alias="img/dog192.png">assets/img/dog192.png</file>
+    </qresource>
+</RCC>

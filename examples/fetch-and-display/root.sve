@@ -30,7 +30,7 @@ func (data *RootData) HandleClick(event *sve.DOMEvent) {
 
     data.bpi = bpi{}
 
-    go func(ee sve.EventEnv) {
+    go func(ee engine.EventEnv) {
 
         ee.Lock()
         data.isLoading = true

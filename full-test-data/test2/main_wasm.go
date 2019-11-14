@@ -3,11 +3,11 @@
 package main
 
 import (
-	"log"
-	"fmt"
 	"flag"
+	"fmt"
+	"log"
 
-	"github.com/p9c/sve"
+	"github.com/p9c/sve/engine"
 )
 
 func main() {
@@ -20,12 +20,12 @@ func main() {
 
 	rootBuilder := &Root{}
 
-	buildEnv, err := sve.NewBuildEnv()
+	buildEnv, err := engine.NewBuildEnv()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	renderer, err := sve.NewJSRenderer(*mountPoint)
+	renderer, err := engine.NewJSRenderer(*mountPoint)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,15 +33,12 @@ func main() {
 
 	for ok := true; ok; ok = renderer.EventWait() {
 
-		buildOut, err := buildEnv.RunBuild(rootBuilder)
-		if err != nil {
-			panic(err)
-		}
+		buildOut := buildEnv.RunBuild(rootBuilder)
 
 		err = renderer.Render(buildOut)
 		if err != nil {
 			panic(err)
 		}
 	}
-	
+
 }

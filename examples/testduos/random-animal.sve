@@ -1,0 +1,112 @@
+<div class="random-animal">
+    <div class="message">どんな子がくるかな？</div>
+    <button @click="data.HandleClick(event)">
+        <span vg-html='data.Target'></span>げっと
+    </button>
+    <div vg-if='data.ClickCount > 0'>
+        <span vg-html='data.ClickCount'></span>回目
+    </div>
+    <div vg-if='data.IsLoading' vg-html>Loading...</div>
+    <div vg-if='len(data.Animal.Url) > 0'>
+        <img vg-if='data.ContentType == "image"' :src='data.Animal.Url'>
+        <video controls vg-if='data.ContentType == "video"' :src='data.Animal.Url'>
+    </div>
+</div>
+
+<style>
+    img, video {
+        width: 500px;
+        height: 500px;
+        object-fit: cover;
+        margin: 50px 0;
+    }
+    button {
+        font-size: 5em;
+        font-weight: bold;
+        margin: 50px 0;
+        padding: 10px 30px;
+        background-color: lightsalmon;
+        color: #fff;
+        border-style: none;
+    }
+    button:hover {
+        background-color: darksalmon;
+        color: #fff;
+        cursor: pointer;
+    }
+    .random-animal {
+        text-align: center;
+    }
+    .message {
+        font-size: 4em;
+    }
+</style>
+
+<script type="application/x-go">
+import "encoding/json"
+import "net/http"
+import "log"
+import "path/filepath"
+
+type RandomAnimalData struct {
+    Animal      Animal
+    ContentType string
+    IsLoading   bool
+    ClickCount  int
+    Target      string
+    Url         string
+}
+
+type Animal struct {
+    Url string `json:"url"`
+}
+
+func (comp *RandomAnimal) NewData(props engine.Props) (interface{}, error) {
+  ret := &RandomAnimalData{}
+  ret.Target, _ = props["target"].(string)
+  ret.Url, _ = props["url"].(string)
+  return ret, nil
+}
+
+func (data *RandomAnimalData) HandleClick(event *event.DOMEvent) {
+    data.ClickCount = data.ClickCount + 1
+    data.Animal = Animal{}
+    ee := event.EventEnv()
+    go func() {
+        ee.Lock()
+        data.IsLoading = true
+        ee.UnlockRender()
+        res, err := http.Get(data.Url)
+        if err != nil {
+            log.Printf("Error fetch()ing: %v", err)
+            return
+        }
+        defer res.Body.Close()
+
+        var a Animal
+        err = json.NewDecoder(res.Body).Decode(&a)
+        if err != nil {
+            log.Printf("Error JSON decoding: %v", err)
+            return
+        }
+
+        ee.Lock()
+        defer ee.UnlockRender()
+        data.Animal = a
+        e := filepath.Ext(data.Animal.Url)
+        data.ContentType = getSourceType(e)
+        data.IsLoading = false
+    }()
+}
+
+func getSourceType(e string) string {
+    switch e {
+        case ".jpeg", ".png", ".jpg", ".JPG":
+            return "image"
+        case ".mp4", ".gif":
+            return "video"
+        default:
+            return "image"
+    }
+}
+</script>

@@ -1,4 +1,4 @@
-package main 
+package main
 
 import "log"
 import "syscall/js"
@@ -28,6 +28,6 @@ func runMemTest() {
 	for i := 0; i < n; i++ {
 		_ = g.Call("testf1", "bleh").String()
 	}
-	log.Printf("avg call time: %v", time.Since(t) / time.Duration(n))
+	log.Printf("avg call time: %v", time.Since(t)/time.Duration(n))
 
 }
