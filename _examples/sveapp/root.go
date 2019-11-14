@@ -12,7 +12,7 @@ type RootData struct {
 	Url string
 }
 
-func (comp *Root) NewData(props component.Props) (interface{}, error) {
+func (comp *Root) NewData(props sve.Props) (interface{}, error) {
 	url := "https://random.dog/woof.json"
 	return &RootData{Url: url}, nil
 }

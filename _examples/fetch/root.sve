@@ -26,11 +26,11 @@ type bpi struct {
     BPI map[string]struct { Code string `json:"code"`; Symbol string  `json:"symbol"`; RateFloat float64 `json:"rate_float"` } `json:"bpi"`
 }
 
-func (data *RootData) HandleClick(event *sve.DOMEvent) {
+func (data *RootData) HandleClick(event *event.DOMEvent) {
 
     data.bpi = bpi{}
 
-    go func(ee engine.EventEnv) {
+    go func(ee event.EventEnv) {
 
         ee.Lock()
         data.isLoading = true

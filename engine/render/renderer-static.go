@@ -2,6 +2,8 @@ package render
 
 import (
 	"fmt"
+	"github.com/p9c/sve/engine/component"
+	"github.com/p9c/sve/engine/vnode"
 	"io"
 	"strings"
 
@@ -27,7 +29,7 @@ func (r *StaticRenderer) SetWriter(w io.Writer) {
 	r.w = w
 }
 
-func (r *StaticRenderer) Render(buildResults *BuildResults) error {
+func (r *StaticRenderer) Render(buildResults *component.BuildResults) error {
 
 	n, err := r.renderOne(buildResults, buildResults.Out)
 	if err != nil {
@@ -43,7 +45,7 @@ func (r *StaticRenderer) Render(buildResults *BuildResults) error {
 
 }
 
-func (r *StaticRenderer) renderOne(br *BuildResults, bo *BuildOut) (*html.Node, error) {
+func (r *StaticRenderer) renderOne(br *component.BuildResults, bo *component.BuildOut) (*html.Node, error) {
 
 	if len(bo.Out) != 1 {
 		return nil, fmt.Errorf("BuildOut must contain exactly one element in Out")
@@ -51,8 +53,8 @@ func (r *StaticRenderer) renderOne(br *BuildResults, bo *BuildOut) (*html.Node, 
 
 	vgn := bo.Out[0]
 
-	var visit func(vgn *VGNode) (*html.Node, error)
-	visit = func(vgn *VGNode) (*html.Node, error) {
+	var visit func(vgn *vnode.VGNode) (*html.Node, error)
+	visit = func(vgn *vnode.VGNode) (*html.Node, error) {
 
 		// if component then look up BuildOut for it and call renderOne again and return
 		if vgn.Component != nil {

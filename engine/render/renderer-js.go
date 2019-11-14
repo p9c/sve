@@ -5,12 +5,15 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/p9c/sve/engine/component"
+	"github.com/p9c/sve/engine/event"
+	"github.com/p9c/sve/engine/vnode"
 	"log"
 	"runtime/debug"
 	"strings"
 	"sync"
 
-	js "github.com/p9c/sve/pkg/js"
+	"github.com/p9c/sve/pkg/js"
 )
 
 // NewJSRenderer will create a new JSRenderer with the speicifc mount point selector.
@@ -72,9 +75,9 @@ func NewJSRenderer(mountPointSelector string) (*JSRenderer, error) {
 
 	ret.eventWaitCh = make(chan bool, 64)
 
-	ret.eventEnv = &eventEnv{
-		rwmu:            &ret.eventRWMU,
-		requestRenderCH: ret.eventWaitCh,
+	ret.eventEnv = &event.EventEnv{
+		Rwmu:            &ret.eventRWMU,
+		RequestRenderCH: ret.eventWaitCh,
 	}
 
 	return ret, nil
@@ -82,12 +85,12 @@ func NewJSRenderer(mountPointSelector string) (*JSRenderer, error) {
 
 type jsRenderState struct {
 	// stores positionID to slice of DOMEventHandlerSpec
-	domHandlerMap map[string][]DOMEventHandlerSpec
+	domHandlerMap map[string][]event.DOMEventHandlerSpec
 }
 
 func newJsRenderState() *jsRenderState {
 	return &jsRenderState{
-		domHandlerMap: make(map[string][]DOMEventHandlerSpec, 8),
+		domHandlerMap: make(map[string][]event.DOMEventHandlerSpec, 8),
 	}
 }
 
@@ -95,9 +98,9 @@ func newJsRenderState() *jsRenderState {
 type JSRenderer struct {
 	MountPointSelector string
 
-	eventWaitCh chan bool    // events send to this and EventWait receives from it
-	eventRWMU   sync.RWMutex // make sure Render and event handling are not attempted at the same time (not totally sure if this is necessary in terms of the wasm threading model but enforce it with a rwmutex all the same)
-	eventEnv    *eventEnv    // our EventEnv implementation that exposes eventRWMU and eventWaitCh to events in a clean way
+	eventWaitCh chan bool       // events send to this and EventWait receives from it
+	eventRWMU   sync.RWMutex    // make sure Render and event handling are not attempted at the same time (not totally sure if this is necessary in terms of the wasm threading model but enforce it with a rwmutex all the same)
+	eventEnv    *event.EventEnv // our EventEnv implementation that exposes eventRWMU and eventWaitCh to events in a clean way
 
 	eventHandlerFunc   js.Func // the callback function for DOM events
 	eventHandlerBuffer []byte
@@ -114,8 +117,8 @@ type JSRenderer struct {
 }
 
 // EventEnv returns an EventEnv that can be used for synchronizing updates.
-func (r *JSRenderer) EventEnv() EventEnv {
-	return r.eventEnv
+func (r *JSRenderer) EvEnv() event.EventEnv {
+	return r.EvEnv()
 }
 
 // Release calls release on any resources that this renderer allocated.
@@ -126,7 +129,7 @@ func (r *JSRenderer) Release() {
 }
 
 // Render implements Renderer.
-func (r *JSRenderer) Render(buildResults *BuildResults) error {
+func (r *JSRenderer) Render(buildResults *component.BuildResults) error {
 
 	bo := buildResults.Out
 
@@ -146,7 +149,7 @@ func (r *JSRenderer) Render(buildResults *BuildResults) error {
 		return fmt.Errorf("BuildOut.Out has bad len %d", len(bo.Out))
 	}
 
-	if bo.Out[0].Type != ElementNode {
+	if bo.Out[0].Type != vnode.ElementNode {
 		return fmt.Errorf("BuildOut.Out[0].Type is (%v), not ElementNode", bo.Out[0].Type)
 	}
 
@@ -259,18 +262,18 @@ func (r *JSRenderer) Render(buildResults *BuildResults) error {
 
 	// TODO: move this next chunk out to it's own func at least
 
-	visitCSSList := func(cssList []*VGNode) error {
+	visitCSSList := func(cssList []*vnode.VGNode) error {
 		// CSS stuff first
 		for _, cssEl := range cssList {
 
 			// some basic sanity checking
-			if cssEl.Type != ElementNode || !(cssEl.Data == "style" || cssEl.Data == "link") {
+			if cssEl.Type != vnode.ElementNode || !(cssEl.Data == "style" || cssEl.Data == "link") {
 				return fmt.Errorf("CSS output must be link or style tag")
 			}
 
 			var textBuf bytes.Buffer
 			for childN := cssEl.FirstChild; childN != nil; childN = childN.NextSibling {
-				if childN.Type != TextNode {
+				if childN.Type != vnode.TextNode {
 					return fmt.Errorf("CSS tag must contain only text children, found %d instead: %#v", childN.Type, childN)
 				}
 				textBuf.WriteString(childN.Data)
@@ -293,8 +296,8 @@ func (r *JSRenderer) Render(buildResults *BuildResults) error {
 		return nil
 	}
 
-	var walkCSSBuildOut func(buildOut *BuildOut) error
-	walkCSSBuildOut = func(buildOut *BuildOut) error {
+	var walkCSSBuildOut func(buildOut *component.BuildOut) error
+	walkCSSBuildOut = func(buildOut *component.BuildOut) error {
 		err := visitCSSList(buildOut.CSS)
 		if err != nil {
 			return err
@@ -369,13 +372,13 @@ func (r *JSRenderer) EventWait() (ok bool) {
 // 	}
 // }
 
-func (r *JSRenderer) visitFirst(state *jsRenderState, bo *BuildOut, br *BuildResults, n *VGNode, positionID []byte) error {
+func (r *JSRenderer) visitFirst(state *jsRenderState, bo *component.BuildOut, br *component.BuildResults, n *vnode.VGNode, positionID []byte) error {
 
 	log.Printf("TODO: We need to go through and optimize away unneeded calls to create elements, set attributes, set event handlers, etc. for cases where they are the same per hash")
 
 	log.Printf("JSRenderer.visitFirst")
 
-	if n.Type != ElementNode {
+	if n.Type != vnode.ElementNode {
 		return fmt.Errorf("root of component must be element")
 	}
 
@@ -421,12 +424,12 @@ func (r *JSRenderer) visitFirst(state *jsRenderState, bo *BuildOut, br *BuildRes
 
 }
 
-func (r *JSRenderer) visitHead(state *jsRenderState, bo *BuildOut, br *BuildResults, n *VGNode, positionID []byte) error {
+func (r *JSRenderer) visitHead(state *jsRenderState, bo *component.BuildOut, br *component.BuildResults, n *vnode.VGNode, positionID []byte) error {
 	log.Printf("TODO: visitHead")
 	return nil
 }
 
-func (r *JSRenderer) visitBody(state *jsRenderState, bo *BuildOut, br *BuildResults, n *VGNode, positionID []byte) error {
+func (r *JSRenderer) visitBody(state *jsRenderState, bo *component.BuildOut, br *component.BuildResults, n *vnode.VGNode, positionID []byte) error {
 
 	if !(n.FirstChild != nil && n.FirstChild.NextSibling == nil) {
 		return fmt.Errorf("body tag must contain exactly one element child")
@@ -435,7 +438,7 @@ func (r *JSRenderer) visitBody(state *jsRenderState, bo *BuildOut, br *BuildResu
 	return r.visitMount(state, bo, br, n.FirstChild, positionID)
 }
 
-func (r *JSRenderer) visitMount(state *jsRenderState, bo *BuildOut, br *BuildResults, n *VGNode, positionID []byte) error {
+func (r *JSRenderer) visitMount(state *jsRenderState, bo *component.BuildOut, br *component.BuildResults, n *vnode.VGNode, positionID []byte) error {
 
 	// log.Printf("visitMount got here")
 
@@ -448,7 +451,7 @@ func (r *JSRenderer) visitMount(state *jsRenderState, bo *BuildOut, br *BuildRes
 
 }
 
-func (r *JSRenderer) visitSyncNode(state *jsRenderState, bo *BuildOut, br *BuildResults, n *VGNode, positionID []byte) error {
+func (r *JSRenderer) visitSyncNode(state *jsRenderState, bo *component.BuildOut, br *component.BuildResults, n *vnode.VGNode, positionID []byte) error {
 
 	log.Printf("visitSyncNode")
 
@@ -465,14 +468,14 @@ func (r *JSRenderer) visitSyncNode(state *jsRenderState, bo *BuildOut, br *Build
 	}
 
 	switch n.Type {
-	case ElementNode:
+	case vnode.ElementNode:
 		err = r.instructionList.writeSetElement(n.Data)
 		if err != nil {
 			return err
 		}
-	case TextNode:
+	case vnode.TextNode:
 		return r.instructionList.writeSetText(n.Data) // no children possible, just return
-	case CommentNode:
+	case vnode.CommentNode:
 		return r.instructionList.writeSetComment(n.Data) // no children possible, just return
 	default:
 		return fmt.Errorf("unknown node type %v", n.Type)
@@ -484,7 +487,7 @@ func (r *JSRenderer) visitSyncNode(state *jsRenderState, bo *BuildOut, br *Build
 }
 
 // visitSyncElementEtc syncs the rest of the stuff that only applies to elements
-func (r *JSRenderer) visitSyncElementEtc(state *jsRenderState, bo *BuildOut, br *BuildResults, n *VGNode, positionID []byte) error {
+func (r *JSRenderer) visitSyncElementEtc(state *jsRenderState, bo *component.BuildOut, br *component.BuildResults, n *vnode.VGNode, positionID []byte) error {
 
 	for _, a := range n.Attr {
 		err := r.instructionList.writeSetAttrStr(a.Key, a.Val)
@@ -561,7 +564,7 @@ func (r *JSRenderer) visitSyncElementEtc(state *jsRenderState, bo *BuildOut, br 
 }
 
 // // writeAllStaticAttrs is a helper to write all the static attrs from a VGNode
-// func (r *JSRenderer) writeAllStaticAttrs(n *VGNode) error {
+// func (r *JSRenderer) writeAllStaticAttrs(n *vnode.VGNode) error {
 // 	for _, a := range n.Attr {
 // 		err := r.instructionList.writeSetAttrStr(a.Key, a.Val)
 // 		if err != nil {
@@ -581,9 +584,9 @@ func (r *JSRenderer) handleDOMEvent() {
 	// rwmu            *sync.RWMutex
 	// requestRenderCH chan bool
 
-	var domEvent DOMEvent
-	domEvent.eventEnv = r.eventEnv
-	domEvent.window = r.window
+	var domEvent event.DOMEvent
+	domEvent.EventEnv = r.eventEnv
+	domEvent.Window = r.window
 
 	var eventDetail struct {
 		PositionID string `json:"position_id"`
@@ -599,7 +602,7 @@ func (r *JSRenderer) handleDOMEvent() {
 	if err != nil {
 		panic(err)
 	}
-	domEvent.eventSummary = eventDetail.EventSummary
+	domEvent.EventSummary = eventDetail.EventSummary
 
 	// log.Printf("eventDetail: %#v", eventDetail)
 
@@ -633,7 +636,7 @@ func (r *JSRenderer) handleDOMEvent() {
 	}()
 
 	handlers := r.jsRenderState.domHandlerMap[eventDetail.PositionID]
-	var f func(*DOMEvent)
+	var f func(*event.DOMEvent)
 	for _, h := range handlers {
 		if h.EventType == eventDetail.EventType && h.Capture == eventDetail.Capture {
 			f = h.Func

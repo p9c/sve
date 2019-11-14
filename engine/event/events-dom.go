@@ -13,11 +13,11 @@ type DOMEvent struct {
 	// jsEvent     js.Value
 	// jsEventThis js.Value
 
-	eventSummary map[string]interface{}
+	EventSummary map[string]interface{}
 
-	eventEnv *eventEnv // eventEnv from the renderer
+	EventEnv *EventEnv // EventEnv from the renderer
 
-	window js.Value // sure, why not
+	Window js.Value // sure, why not
 }
 
 // Prop returns a value from the EventSummary using the keys you specify.
@@ -28,7 +28,7 @@ type DOMEvent struct {
 func (e *DOMEvent) Prop(keys ...string) interface{} {
 
 	var ret interface{}
-	ret = e.eventSummary
+	ret = e.EveSummary
 
 	for _, key := range keys {
 
@@ -75,44 +75,44 @@ func (e *DOMEvent) PropBool(keys ...string) bool {
 // penalty, whereas calls to JSEvent, JSEventTarget, etc. require a call into the browser
 // JS engine and the attendant resource usage.  So if you can get the information you
 // need from the EventSummary, that's better.
-func (e *DOMEvent) EventSummary() map[string]interface{} {
-	return e.eventSummary
+func (e *DOMEvent) EveSummary() map[string]interface{} {
+	return e.EveSummary()
 }
 
 // JSEvent this returns a js.Value in wasm that corresponds to the event object.
 // Non-wasm implementation returns nil.
 func (e *DOMEvent) JSEvent() js.Value {
-	return e.window.Call("sveGetActiveEvent")
+	return e.Window.Call("sveGetActiveEvent")
 }
 
 // JSEventTarget returns the value of the "target" property of the event, the element
 // that the event was originally fired/registered on.
 func (e *DOMEvent) JSEventTarget() js.Value {
-	return e.window.Call("sveGetActiveEventTarget")
+	return e.Window.Call("sveGetActiveEventTarget")
 }
 
 // JSEventCurrentTarget returns the value of the "currentTarget" property of the event, the element
 // that is currently processing the event.
 func (e *DOMEvent) JSEventCurrentTarget() js.Value {
-	return e.window.Call("sveGetActiveEventCurrentTarget")
+	return e.Window.Call("sveGetActiveEventCurrentTarget")
 }
 
 // EventEnv returns the EventEnv for the current environment and allows locking and unlocking around modifications.
 // See EventEnv struct.
-func (e *DOMEvent) EventEnv() EventEnv {
-	return e.eventEnv
+func (e *DOMEvent) EventIEnv() *EventEnv {
+	return e.EventEnv
 }
 
 // PreventDefault calls preventDefault() on the underlying DOM event.
 // May only be used within event handler in same goroutine.
 func (e *DOMEvent) PreventDefault() {
-	e.window.Call("sveActiveEventPreventDefault")
+	e.Window.Call("sveActiveEventPreventDefault")
 }
 
 // StopPropagation calls stopPropagation() on the underlying DOM event.
 // May only be used within event handler in same goroutine.
 func (e *DOMEvent) StopPropagation() {
-	e.window.Call("sveActiveEventStopPropagation")
+	e.Window.Call("sveActiveEventStopPropagation")
 }
 
 type DOMEventHandlerSpec struct {
@@ -165,7 +165,7 @@ type DOMEventHandlerSpec struct {
 
 // EventEnv provides locking mechanism to for rendering environment to events so
 // data access and rendering can be synchronized and avoid race conditions.
-type EventEnv interface {
+type EvEnv interface {
 	Lock()         // acquire write lock
 	UnlockOnly()   // release write lock
 	UnlockRender() // release write lock and request re-render
@@ -174,54 +174,54 @@ type EventEnv interface {
 	RUnlock() // release read lock
 }
 
-// eventEnv implements EventEnv
-type eventEnv struct {
-	rwmu            *sync.RWMutex
-	requestRenderCH chan bool
+// EventEnv implements EventEnv
+type EventEnv struct {
+	Rwmu            *sync.RWMutex
+	RequestRenderCH chan bool
 }
 
 // Lock will acquire write lock
-func (ee *eventEnv) Lock() {
+func (ee *EventEnv) Lock() {
 	// if ee.rwmu == nil {
 	// 	return
 	// }
-	ee.rwmu.Lock()
+	ee.Rwmu.Lock()
 }
 
 // UnlockOnly will release the write lock
-func (ee *eventEnv) UnlockOnly() {
+func (ee *EventEnv) UnlockOnly() {
 	// if ee.rwmu == nil {
 	// 	return
 	// }
-	ee.rwmu.Unlock()
+	ee.Rwmu.Unlock()
 }
 
 // UnlockRender will release write lock and request re-render
-func (ee *eventEnv) UnlockRender() {
+func (ee *EventEnv) UnlockRender() {
 	// if ee.rwmu != nil {
-	ee.rwmu.Unlock()
+	ee.Rwmu.Unlock()
 	// }
-	if ee.requestRenderCH != nil {
+	if ee.RequestRenderCH != nil {
 		// send non-blocking
 		select {
-		case ee.requestRenderCH <- true:
+		case ee.RequestRenderCH <- true:
 		default:
 		}
 	}
 }
 
 // RLock will acquire a read lock
-func (ee *eventEnv) RLock() {
+func (ee *EventEnv) RLock() {
 	// if ee.rwmu == nil {
 	// 	return
 	// }
-	ee.rwmu.RLock()
+	ee.Rwmu.RLock()
 }
 
 // RUnlock will release the read lock
-func (ee *eventEnv) RUnlock() {
+func (ee *EventEnv) RUnlock() {
 	// if ee.rwmu == nil {
 	// 	return
 	// }
-	ee.rwmu.RUnlock()
+	ee.Rwmu.RUnlock()
 }

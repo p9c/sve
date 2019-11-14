@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/p9c/sve/engine"
+	"github.com/p9c/sve/engine/component"
 	"github.com/p9c/sve/engine/parser"
+	"github.com/p9c/sve/engine/render"
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/webengine"
 	"github.com/therecipe/qt/widgets"
@@ -26,25 +27,21 @@ import (
 
 func main() {
 	start := time.Now()
-
 	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
-
-	//var qmlBridge *QmlBridge
-
 	widgets.NewQApplication(len(os.Args), os.Args)
-
+	//var qmlBridge *QmlBridge
 	mountPoint := flag.String("mount-point", "#sve_mount_point", "The query selector for the mount point for the root component, if it is not a full HTML component")
 	flag.Parse()
-
-	fmt.Printf("Entering main(), -mount-point=%q\n", *mountPoint)
-	defer fmt.Printf("Exiting main()\n")
-
+	//fmt.Printf("Entering main(), -mount-point=%q\n", *mountPoint)
+	//defer fmt.Printf("Exiting main()\n")
 	rootBuilder := &Root{}
+
+
 
 	pkgPath, _ := os.Getwd()
 	// svegen path/to/package
 	var opts parser.ParserGoPkgOpts
-	p := engine.NewParserGoPkg(pkgPath, &opts)
+	p := parser.NewParserGoPkg(pkgPath, &opts)
 	err := p.Run()
 	if err != nil {
 		log.Fatal(err)
@@ -56,12 +53,12 @@ func main() {
 	// include a CSS file
 	// simplehttp.DefaultStaticData["CSSFiles"] = []string{ "/my/file.css" }
 
-	buildEnv, err := engine.NewBuildEnv()
+	buildEnv, err := component.NewBuildEnv()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	renderer, err := engine.NewJSRenderer(*mountPoint)
+	renderer, err := render.NewJSRenderer(*mountPoint)
 	if err != nil {
 		log.Fatal(err)
 	}
